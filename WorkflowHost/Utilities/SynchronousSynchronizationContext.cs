@@ -1,14 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : WorkflowHost
+// Author           : rahulrai
+// Created          : 01-04-2016
+//
+// Last Modified By : rahulrai
+// Last Modified On : 01-07-2016
+// ***********************************************************************
+// <copyright file="SynchronousSynchronizationContext.cs" company="">
+//     Copyright ©  2016
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 
 namespace WorkflowHost.Utilities
 {
-    using System.Diagnostics.Contracts;
+    #region
+
     using System.Threading;
 
+    #endregion
+
+    /// <summary>
+    /// Class SynchronousSynchronizationContext.
+    /// </summary>
     internal class SynchronousSynchronizationContext : SynchronizationContext
     {
         #region Public Methods and Operators
@@ -16,15 +30,10 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The post.
         /// </summary>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
+        /// <param name="callback">The callback.</param>
+        /// <param name="state">The state.</param>
         public override void Post(SendOrPostCallback callback, object state)
         {
-            Contract.Requires<Exception>(null != callback, "callback");
             callback(state);
         }
 

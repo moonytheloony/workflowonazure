@@ -1,0 +1,121 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="WorkflowHost.Workflow.CopyDocsToContainer"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:local="clr-namespace:WorkflowHost.Entities"
+ xmlns:local1="clr-namespace:WorkflowHost.Workflow"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="ChannelData" Type="InOutArgument(local:ChannelData)" />
+  </x:Members>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>WorkflowHost.Workflow.CopyDocsToContainer_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>WorkflowHost.Entities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>Microsoft.Data.Edm</AssemblyReference>
+      <AssemblyReference>Microsoft.Data.OData</AssemblyReference>
+      <AssemblyReference>Microsoft.Data.Services.Client</AssemblyReference>
+      <AssemblyReference>Microsoft.ServiceBus</AssemblyReference>
+      <AssemblyReference>Microsoft.WindowsAzure.Configuration</AssemblyReference>
+      <AssemblyReference>Microsoft.WindowsAzure.Storage</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Activities.Presentation</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Runtime.DurableInstancing</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Spatial</AssemblyReference>
+      <AssemblyReference>System.WorkflowServices</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>Microsoft.WindowsAzure.ServiceRuntime</AssemblyReference>
+      <AssemblyReference>Microsoft.WindowsAzure.Diagnostics</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>WorkflowHost</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <local1:GetAllBlobsFromContainer sap2010:WorkflowViewState.IdRef="GetAllBlobsFromContainer_1">
+      <local1:GetAllBlobsFromContainer.ChannelData>
+        <InOutArgument x:TypeArguments="local:ChannelData">
+          <mca:CSharpReference x:TypeArguments="local:ChannelData">ChannelData</mca:CSharpReference>
+        </InOutArgument>
+      </local1:GetAllBlobsFromContainer.ChannelData>
+    </local1:GetAllBlobsFromContainer>
+    <ForEach x:TypeArguments="x:String" DisplayName="ForEach&lt;String&gt;">
+      <ForEach.Values>
+        <InArgument x:TypeArguments="scg:IEnumerable(x:String)">
+          <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:String)">ChannelData.Payload.ItemList</mca:CSharpValue>
+        </InArgument>
+      </ForEach.Values>
+      <ActivityAction x:TypeArguments="x:String">
+        <ActivityAction.Argument>
+          <DelegateInArgument x:TypeArguments="x:String" Name="item" />
+        </ActivityAction.Argument>
+        <If sap2010:WorkflowViewState.IdRef="If_1">
+          <If.Condition>
+            <InArgument x:TypeArguments="x:Boolean">
+              <mca:CSharpValue x:TypeArguments="x:Boolean">item.EndsWith("docx")</mca:CSharpValue>
+            </InArgument>
+          </If.Condition>
+          <If.Then>
+            <local1:CopyBlobToContainer sap2010:WorkflowViewState.IdRef="CopyBlobToContainer_1">
+              <local1:CopyBlobToContainer.ChannelData>
+                <InOutArgument x:TypeArguments="local:ChannelData">
+                  <mca:CSharpReference x:TypeArguments="local:ChannelData">ChannelData</mca:CSharpReference>
+                </InOutArgument>
+              </local1:CopyBlobToContainer.ChannelData>
+              <local1:CopyBlobToContainer.Data>
+                <InArgument x:TypeArguments="x:String">
+                  <mca:CSharpValue x:TypeArguments="x:String">item</mca:CSharpValue>
+                </InArgument>
+              </local1:CopyBlobToContainer.Data>
+            </local1:CopyBlobToContainer>
+          </If.Then>
+        </If>
+      </ActivityAction>
+      <sap2010:WorkflowViewState.IdRef>ForEach`1_2</sap2010:WorkflowViewState.IdRef>
+    </ForEach>
+    <sads:DebugSymbol.Symbol>d1pFOlxQcm9qZWN0c1xXb3JrZmxvd09uQXp1cmVcV29ya2Zsb3dPbkF6dXJlXFdvcmtmbG93SG9zdFxXb3JrZmxvd1xDb3B5RG9jc1RvQ29udGFpbmVyLnhhbWwKPQNoDgIBAT4FRCcCARBFBWYPAgECQQtBZQIBEUgLSHYCAQ5PCWMOAgEDUg9SYwIBBFYNYSoCAQdZE1ltAgELXhNeVQIBCA==</sads:DebugSymbol.Symbol>
+  </Sequence>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="GetAllBlobsFromContainer_1" sap:VirtualizedContainerService.HintSize="494.4,22.4" />
+      <sap2010:ViewStateData Id="CopyBlobToContainer_1" sap:VirtualizedContainerService.HintSize="200,22.4" />
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="464,212" />
+      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="494.4,363.2" />
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="516.8,550.4">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WorkflowHost.Workflow.CopyDocsToContainer_1" sap:VirtualizedContainerService.HintSize="556.8,630.4" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>

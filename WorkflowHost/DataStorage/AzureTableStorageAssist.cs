@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WorkflowHost.DataStorage
+﻿namespace WorkflowHost.DataStorage
 {
-    using System.Diagnostics.Contracts;
+    #region
+
+    using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
 
@@ -16,28 +14,29 @@ namespace WorkflowHost.DataStorage
     using WorkflowHost.Entities;
     using WorkflowHost.Utilities;
 
+    #endregion
+
     public static class AzureTableStorageAssist
     {
         #region Public Methods and Operators
 
         /// <summary>
-        /// The convert dynamic entity to entity.
+        ///     The convert dynamic entity to entity.
         /// </summary>
         /// <param name="entity">
-        /// The entity.
+        ///     The entity.
         /// </param>
         /// <typeparam name="TEntity">
-        /// Type of target object.
+        ///     Type of target object.
         /// </typeparam>
         /// <returns>
-        /// The <see cref="TEntity"/>.
+        ///     The <see cref="TEntity" />.
         /// </returns>
-        /// <exception cref="InputValidationFailedException">
-        /// Input is not valid.
+        /// <exception>
+        ///     Input is not valid.
         /// </exception>
         public static TEntity ConvertDynamicEntityToEntity<TEntity>(this DynamicTableEntity entity)
         {
-            Contract.Requires<Exception>(null != entity, "entity");
             var targetObject = (TEntity)Activator.CreateInstance(typeof(TEntity));
             var targetObjectType = targetObject.GetType();
             var objectProperties = targetObjectType.GetProperties().ToList();
@@ -87,9 +86,7 @@ namespace WorkflowHost.DataStorage
                 //// Handle special case of auto generated string list. Known Issue: Can handle classes with one list only.
                 if (property.Key.StartsWith(ApplicationConstants.IndexSubscript, StringComparison.OrdinalIgnoreCase))
                 {
-                    var splitString = property.Key.Split(
-                        new[] { "_" },
-                        StringSplitOptions.RemoveEmptyEntries);
+                    var splitString = property.Key.Split(new[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
                     if (null == sortedList)
                     {
                         sortedList = new SortedList<int, string>();
@@ -125,19 +122,19 @@ namespace WorkflowHost.DataStorage
         }
 
         /// <summary>
-        /// The convert entity to dynamic table entity.
+        ///     The convert entity to dynamic table entity.
         /// </summary>
         /// <param name="entity">
-        /// The entity.
+        ///     The entity.
         /// </param>
         /// <typeparam name="TEntity">
-        /// Type of entity to convert.
+        ///     Type of entity to convert.
         /// </typeparam>
         /// <returns>
-        /// The <see cref="DynamicTableEntity"/>.
+        ///     The <see cref="DynamicTableEntity" />.
         /// </returns>
-        /// <exception cref="InputValidationFailedException">
-        /// Input could not be validated
+        /// <exception>
+        ///     Input could not be validated
         /// </exception>
         public static DynamicTableEntity ConvertEntityToDynamicTableEntity<TEntity>(this TEntity entity)
         {
@@ -179,19 +176,19 @@ namespace WorkflowHost.DataStorage
         #region Methods
 
         /// <summary>
-        /// The fill dynamic entity property bag.
+        ///     The fill dynamic entity property bag.
         /// </summary>
         /// <param name="entity">
-        /// The entity.
+        ///     The entity.
         /// </param>
         /// <param name="dynamicEntity">
-        /// The dynamic entity.
+        ///     The dynamic entity.
         /// </param>
         /// <param name="objectProperties">
-        /// The object properties.
+        ///     The object properties.
         /// </param>
         /// <typeparam name="TEntity">
-        /// T Entity
+        ///     T Entity
         /// </typeparam>
         private static void FillDynamicEntityPropertyBag<TEntity>(
             this TEntity entity,
@@ -229,9 +226,7 @@ namespace WorkflowHost.DataStorage
                 }
                 else if (propertyName.CompareCaseInvariant("entitytag"))
                 {
-                    dynamicEntity.ETag = string.IsNullOrWhiteSpace(propertyValue)
-                        ? "*"
-                        : propertyValue;
+                    dynamicEntity.ETag = string.IsNullOrWhiteSpace(propertyValue) ? "*" : propertyValue;
                 }
                 else if (propertyType == typeof(IList<string>))
                 {
@@ -262,22 +257,22 @@ namespace WorkflowHost.DataStorage
         }
 
         /// <summary>
-        /// The populate entity property with dynamic entity value.
+        ///     The populate entity property with dynamic entity value.
         /// </summary>
         /// <param name="entity">
-        /// The entity.
+        ///     The entity.
         /// </param>
         /// <param name="propertyInfo">
-        /// The property info.
+        ///     The property info.
         /// </param>
         /// <param name="targetObject">
-        /// The target object.
+        ///     The target object.
         /// </param>
         /// <param name="propertyName">
-        /// The property name.
+        ///     The property name.
         /// </param>
         /// <typeparam name="TEntity">
-        /// Entity type of element.
+        ///     Entity type of element.
         /// </typeparam>
         private static void PopulateEntityPropertyWithDynamicEntityValue<TEntity>(
             DynamicTableEntity entity,
@@ -303,6 +298,5 @@ namespace WorkflowHost.DataStorage
         }
 
         #endregion
-
     }
 }

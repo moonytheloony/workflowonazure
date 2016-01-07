@@ -1,54 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : WorkflowHost
+// Author           : rahulrai
+// Created          : 01-04-2016
+//
+// Last Modified By : rahulrai
+// Last Modified On : 01-07-2016
+// ***********************************************************************
+// <copyright file="AsyncResult.cs" company="">
+//     Copyright ©  2016
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 
 namespace WorkflowHost.Utilities
 {
+    #region
+
+    using System;
     using System.Threading;
 
+    #endregion
+
+    /// <summary>
+    /// Class AsyncResult.
+    /// </summary>
     internal abstract class AsyncResult : IAsyncResult
     {
         #region Fields
 
         /// <summary>
-        ///     The asyncOperationCallback.
+        /// The asyncOperationCallback.
         /// </summary>
         private readonly AsyncCallback callback;
 
         /// <summary>
-        ///     The state.
+        /// The state.
         /// </summary>
         private readonly object state;
 
         /// <summary>
-        ///     The this lock.
+        /// The this lock.
         /// </summary>
         private readonly object thisLock;
 
         /// <summary>
-        ///     The completed synchronously.
+        /// The completed synchronously.
         /// </summary>
         private bool completedSynchronously;
 
         /// <summary>
-        ///     The end called.
+        /// The end called.
         /// </summary>
         private bool endCalled;
 
         /// <summary>
-        ///     The completeOperationException.
+        /// The completeOperationException.
         /// </summary>
         private Exception exception;
 
         /// <summary>
-        ///     The is completed.
+        /// The is completed.
         /// </summary>
         private bool isCompleted;
 
         /// <summary>
-        ///     The manual reset event.
+        /// The manual reset event.
         /// </summary>
         private volatile ManualResetEvent manualResetEvent;
 
@@ -57,14 +73,10 @@ namespace WorkflowHost.Utilities
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncResult"/> class.
+        /// Initializes a new instance of the <see cref="AsyncResult" /> class.
         /// </summary>
-        /// <param name="callback">
-        /// The asyncOperationCallback.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
+        /// <param name="callback">The asyncOperationCallback.</param>
+        /// <param name="state">The state.</param>
         protected AsyncResult(AsyncCallback callback, object state)
         {
             this.callback = callback;
@@ -77,7 +89,7 @@ namespace WorkflowHost.Utilities
         #region Delegates
 
         /// <summary>
-        ///     Asynchronous complete.
+        /// Asynchronous complete.
         /// </summary>
         /// <param name="result">The result.</param>
         /// <returns>Pointer to function.</returns>
@@ -88,8 +100,9 @@ namespace WorkflowHost.Utilities
         #region Public Properties
 
         /// <summary>
-        ///     Gets the async state.
+        /// Gets the async state.
         /// </summary>
+        /// <value>The state of the asynchronous.</value>
         public object AsyncState
         {
             get
@@ -99,8 +112,9 @@ namespace WorkflowHost.Utilities
         }
 
         /// <summary>
-        ///     Gets the async wait handle.
+        /// Gets the async wait handle.
         /// </summary>
+        /// <value>The asynchronous wait handle.</value>
         public WaitHandle AsyncWaitHandle
         {
             get
@@ -123,8 +137,9 @@ namespace WorkflowHost.Utilities
         }
 
         /// <summary>
-        ///     Gets a value indicating whether completed synchronously.
+        /// Gets a value indicating whether completed synchronously.
         /// </summary>
+        /// <value><c>true</c> if [completed synchronously]; otherwise, <c>false</c>.</value>
         public bool CompletedSynchronously
         {
             get
@@ -134,8 +149,9 @@ namespace WorkflowHost.Utilities
         }
 
         /// <summary>
-        ///     Gets a value indicating whether is completed.
+        /// Gets a value indicating whether is completed.
         /// </summary>
+        /// <value><c>true</c> if this instance is completed; otherwise, <c>false</c>.</value>
         public bool IsCompleted
         {
             get
@@ -149,8 +165,9 @@ namespace WorkflowHost.Utilities
         #region Properties
 
         /// <summary>
-        ///     Gets the this lock.
+        /// Gets the this lock.
         /// </summary>
+        /// <value>The this lock.</value>
         private object ThisLock
         {
             get
@@ -166,15 +183,12 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// Ends the specified result.
         /// </summary>
-        /// <typeparam name="TAsyncResult">
-        /// The type of the asynchronous result.
-        /// </typeparam>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <returns>
-        /// Asynchronous result
-        /// </returns>
+        /// <typeparam name="TAsyncResult">The type of the asynchronous result.</typeparam>
+        /// <param name="result">The result.</param>
+        /// <returns>Asynchronous result</returns>
+        /// <exception cref="System.ArgumentNullException">result</exception>
+        /// <exception cref="System.ArgumentException">@Invalid AsyncResult;result</exception>
+        /// <exception cref="System.InvalidOperationException">Async Result already ended</exception>
         /// <completeOperationException cref="System.ArgumentNullException">argument null result</completeOperationException>
         /// <completeOperationException cref="System.ArgumentException">Invalid AsyncResult result</completeOperationException>
         /// <completeOperationException cref="System.InvalidOperationException">AsyncResult already ended</completeOperationException>
@@ -220,11 +234,12 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// Completes the specified completed synchronously.
         /// </summary>
-        /// <param name="isCompletedSynchronously">
-        /// if set to <c>true</c> [completed synchronously].
-        /// </param>
+        /// <param name="isCompletedSynchronously">if set to <c>true</c> [completed synchronously].</param>
+        /// <exception cref="System.InvalidProgramException">
+        /// Async async Operation Callback threw an Exception
+        /// </exception>
         /// <completeOperationException cref="System.InvalidProgramException">
-        ///     Async asyncOperationCallback threw an Exception
+        /// Async asyncOperationCallback threw an Exception
         /// </completeOperationException>
         protected void Complete(bool isCompletedSynchronously)
         {

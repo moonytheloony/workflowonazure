@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("WorkflowHost")]
+[assembly: AssemblyTitle("TestApplication")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WorkflowHost")]
+[assembly: AssemblyProduct("TestApplication")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("3ad53ac4-c34e-4a54-b535-0017e8999586")]
+[assembly: Guid("2f5ce9fa-b2f4-454e-a1ac-a39359dc28cb")]
 
 // Version information for an assembly consists of the following four values:
 //

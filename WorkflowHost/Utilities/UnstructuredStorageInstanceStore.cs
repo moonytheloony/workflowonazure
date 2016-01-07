@@ -1,16 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : WorkflowHost
+// Author           : rahulrai
+// Created          : 01-04-2016
+//
+// Last Modified By : rahulrai
+// Last Modified On : 01-07-2016
+// ***********************************************************************
+// <copyright file="UnstructuredStorageInstanceStore.cs" company="">
+//     Copyright ©  2016
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 
 namespace WorkflowHost.Utilities
 {
+    #region
+
+    using System;
     using System.Activities.DurableInstancing;
     using System.Activities.Hosting;
-    using System.Diagnostics.Contracts;
-    using System.Globalization;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Runtime.DurableInstancing;
     using System.Runtime.Serialization;
     using System.Xml;
@@ -19,12 +30,17 @@ namespace WorkflowHost.Utilities
     using WorkflowHost.DataStorage;
     using WorkflowHost.Entities;
 
+    #endregion
+
+    /// <summary>
+    /// Class UnstructuredStorageInstanceStore.
+    /// </summary>
     internal class UnstructuredStorageInstanceStore : InstanceStore
     {
         #region Static Fields
 
         /// <summary>
-        ///     The local lock.
+        /// The local lock.
         /// </summary>
         private static readonly object LocalLock = new object();
 
@@ -33,17 +49,17 @@ namespace WorkflowHost.Utilities
         #region Fields
 
         /// <summary>
-        ///     The submit state message.
+        /// The submit state message.
         /// </summary>
         private readonly Action<Guid> submitStateMessage;
 
         /// <summary>
-        ///     The unstructured storage repository.
+        /// The unstructured storage repository.
         /// </summary>
         private readonly AzureTableStorageRepository<InstanceData> unstructuredStorageRepository;
 
         /// <summary>
-        ///     The owner instance id.
+        /// The owner instance id.
         /// </summary>
         private Guid ownerInstanceId;
 
@@ -52,17 +68,11 @@ namespace WorkflowHost.Utilities
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnstructuredStorageInstanceStore"/> class.
+        /// Initializes a new instance of the <see cref="UnstructuredStorageInstanceStore" /> class.
         /// </summary>
-        /// <param name="unstructuredStorageRepository">
-        /// The unstructured storage repository.
-        /// </param>
-        /// <param name="ownerInstanceId">
-        /// The owner instance id.
-        /// </param>
-        /// <param name="submitStateMessage">
-        /// The submit State Message.
-        /// </param>
+        /// <param name="unstructuredStorageRepository">The unstructured storage repository.</param>
+        /// <param name="ownerInstanceId">The owner instance id.</param>
+        /// <param name="submitStateMessage">The submit State Message.</param>
         internal UnstructuredStorageInstanceStore(
             AzureTableStorageRepository<InstanceData> unstructuredStorageRepository,
             Guid ownerInstanceId,
@@ -83,27 +93,13 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The begin try command.
         /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <param name="timeout">
-        /// The timeout.
-        /// </param>
-        /// <param name="callback">
-        /// The callback.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IAsyncResult"/>.
-        /// </returns>
-        /// <exception cref="SystemFailureException">
-        /// Error processing message.
-        /// </exception>
+        /// <param name="context">The context.</param>
+        /// <param name="command">The command.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="callback">The callback.</param>
+        /// <param name="state">The state.</param>
+        /// <returns>The <see cref="IAsyncResult" />.</returns>
+        /// <exception cref="SystemFailureException">Error processing message.</exception>
         protected override IAsyncResult BeginTryCommand(
             InstancePersistenceContext context,
             InstancePersistenceCommand command,
@@ -111,7 +107,6 @@ namespace WorkflowHost.Utilities
             AsyncCallback callback,
             object state)
         {
-            Contract.Requires<Exception>(null != context, "context");
             lock (LocalLock)
             {
                 if (command is CreateWorkflowOwnerCommand)
@@ -129,10 +124,9 @@ namespace WorkflowHost.Utilities
                     {
                         try
                         {
-                            var instanceData =
-                                this.unstructuredStorageRepository.GetById(
-                                    "WorkflowInstanceStoreData",
-                                    this.ownerInstanceId.ToString());
+                            var instanceData = this.unstructuredStorageRepository.GetById(
+                                "WorkflowInstanceStoreData",
+                                this.ownerInstanceId.ToString());
                             var deserializedData = DeserializeData(instanceData.Payload.Combine());
                             context.LoadedInstance(InstanceState.Initialized, deserializedData, null, null, null);
                         }
@@ -150,12 +144,8 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The end try command.
         /// </summary>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        /// <param name="result">The result.</param>
+        /// <returns>The <see cref="bool" />.</returns>
         protected override bool EndTryCommand(IAsyncResult result)
         {
             return CompletedAsyncResult<bool>.End(result);
@@ -164,18 +154,10 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The try command.
         /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <param name="timeout">
-        /// The timeout.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        /// <param name="context">The context.</param>
+        /// <param name="command">The command.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <returns>The <see cref="bool" />.</returns>
         protected override bool TryCommand(
             InstancePersistenceContext context,
             InstancePersistenceCommand command,
@@ -187,12 +169,8 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The deserialize data.
         /// </summary>
-        /// <param name="payload">
-        /// The payload.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IDictionary"/>.
-        /// </returns>
+        /// <param name="payload">The payload.</param>
+        /// <returns>The <see cref="IDictionary" />.</returns>
         private static IDictionary<XName, InstanceValue> DeserializeData(string payload)
         {
             var xmlDocument = new XmlDocument();
@@ -216,15 +194,9 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The deserialize object.
         /// </summary>
-        /// <param name="serializer">
-        /// The serializer.
-        /// </param>
-        /// <param name="element">
-        /// The element.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
+        /// <param name="serializer">The serializer.</param>
+        /// <param name="element">The element.</param>
+        /// <returns>The <see cref="object" />.</returns>
         private static object DeserializeObject(IFormatter serializer, XmlNode element)
         {
             object deserializedObject = null;
@@ -240,18 +212,10 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The serialize object.
         /// </summary>
-        /// <param name="elementName">
-        /// The element name.
-        /// </param>
-        /// <param name="objectToSerialize">
-        /// The object to serialize.
-        /// </param>
-        /// <param name="xmlDocument">
-        /// The xml document.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlElement"/>.
-        /// </returns>
+        /// <param name="elementName">The element name.</param>
+        /// <param name="objectToSerialize">The object to serialize.</param>
+        /// <param name="xmlDocument">The xml document.</param>
+        /// <returns>The <see cref="XmlElement" />.</returns>
         private static XmlElement SerializeObject(string elementName, object objectToSerialize, XmlDocument xmlDocument)
         {
             var netDataContractSerializer = new NetDataContractSerializer();
@@ -267,14 +231,12 @@ namespace WorkflowHost.Utilities
         /// <summary>
         /// The save instance data.
         /// </summary>
-        /// <param name="instanceData">
-        /// The instance data.
-        /// </param>
+        /// <param name="instanceData">The instance data.</param>
         private void SaveInstanceData(IEnumerable<KeyValuePair<XName, InstanceValue>> instanceData)
         {
             //// Change workflow instance id to request id to establish correlation.
             var workflowInstanceData = instanceData as IList<KeyValuePair<XName, InstanceValue>>
-                ?? instanceData.ToList();
+                                       ?? instanceData.ToList();
             foreach (var instanceInfo in workflowInstanceData)
             {
                 if (instanceInfo.Key.LocalName != "Workflow")
@@ -283,7 +245,8 @@ namespace WorkflowHost.Utilities
                 }
 
                 var properties = instanceInfo.Value.Value.GetType().GetProperties();
-                foreach (var propertyInfo in properties.Where(propertyInfo => propertyInfo.Name == "WorkflowInstanceId"))
+                foreach (var propertyInfo in properties.Where(propertyInfo => propertyInfo.Name == "WorkflowInstanceId")
+                    )
                 {
                     propertyInfo.SetValue(instanceInfo.Value.Value, this.ownerInstanceId);
                 }
@@ -305,12 +268,12 @@ namespace WorkflowHost.Utilities
             }
 
             var data = new InstanceData
-            {
-                InstanceKey = "WorkflowInstanceStoreData",
-                RequestId = this.ownerInstanceId.ToString(),
-                Payload = xmlDocument.InnerXml.SplitByLength(5000).ToList(),
-                EntityTag = "*"
-            };
+                           {
+                               InstanceKey = "WorkflowInstanceStoreData",
+                               RequestId = this.ownerInstanceId.ToString(),
+                               Payload = xmlDocument.InnerXml.SplitByLength(5000).ToList(),
+                               EntityTag = "*"
+                           };
             this.unstructuredStorageRepository.Update(data);
             this.unstructuredStorageRepository.Save();
             var bookmarks = (from element in workflowInstanceData
